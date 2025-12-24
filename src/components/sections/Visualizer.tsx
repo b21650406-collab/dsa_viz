@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Pause, Play, RotateCcw, SkipForward } from "lucide-react";
+import { ChevronRight, Code, Pause, Play, RotateCcw, SkipForward } from "lucide-react";
 
 const algorithms = ["Bubble Sort", "Quick Sort", "Merge Sort", "Binary Search", "BFS", "DFS"];
 
@@ -19,6 +19,111 @@ type AlgorithmStep = {
   queue?: number[];
   stack?: number[];
   current?: number;
+  codeLine?: number[];
+};
+
+// Algorithm code snippets
+const algorithmCode: Record<string, string[]> = {
+  "Bubble Sort": [
+    "function bubbleSort(arr) {",
+    "  for (let i = 0; i < n-1; i++) {",
+    "    for (let j = 0; j < n-i-1; j++) {",
+    "      if (arr[j] > arr[j+1]) {",
+    "        swap(arr[j], arr[j+1]);",
+    "      }",
+    "    }",
+    "  }",
+    "  return arr;",
+    "}",
+  ],
+  "Quick Sort": [
+    "function quickSort(arr, low, high) {",
+    "  if (low < high) {",
+    "    pivot = arr[high];",
+    "    i = low - 1;",
+    "    for (j = low; j < high; j++) {",
+    "      if (arr[j] < pivot) {",
+    "        i++; swap(arr[i], arr[j]);",
+    "      }",
+    "    }",
+    "    swap(arr[i+1], arr[high]);",
+    "    pi = i + 1;",
+    "    quickSort(arr, low, pi-1);",
+    "    quickSort(arr, pi+1, high);",
+    "  }",
+    "}",
+  ],
+  "Merge Sort": [
+    "function mergeSort(arr) {",
+    "  if (arr.length <= 1) return arr;",
+    "  mid = arr.length / 2;",
+    "  left = mergeSort(arr[0..mid]);",
+    "  right = mergeSort(arr[mid..n]);",
+    "  return merge(left, right);",
+    "}",
+    "",
+    "function merge(left, right) {",
+    "  result = [];",
+    "  while (left && right) {",
+    "    if (left[0] <= right[0])",
+    "      result.push(left.shift());",
+    "    else",
+    "      result.push(right.shift());",
+    "  }",
+    "  return [...result, ...left, ...right];",
+    "}",
+  ],
+  "Binary Search": [
+    "function binarySearch(arr, target) {",
+    "  left = 0, right = arr.length - 1;",
+    "  while (left <= right) {",
+    "    mid = Math.floor((left+right)/2);",
+    "    if (arr[mid] === target) {",
+    "      return mid; // Found!",
+    "    }",
+    "    if (arr[mid] < target) {",
+    "      left = mid + 1;",
+    "    } else {",
+    "      right = mid - 1;",
+    "    }",
+    "  }",
+    "  return -1; // Not found",
+    "}",
+  ],
+  "BFS": [
+    "function BFS(graph, start) {",
+    "  visited = new Set();",
+    "  queue = [start];",
+    "  while (queue.length > 0) {",
+    "    node = queue.shift();",
+    "    if (visited.has(node)) continue;",
+    "    visited.add(node);",
+    "    for (neighbor of graph[node]) {",
+    "      if (!visited.has(neighbor)) {",
+    "        queue.push(neighbor);",
+    "      }",
+    "    }",
+    "  }",
+    "  return visited;",
+    "}",
+  ],
+  "DFS": [
+    "function DFS(graph, start) {",
+    "  visited = new Set();",
+    "  stack = [start];",
+    "  while (stack.length > 0) {",
+    "    node = stack.pop();",
+    "    if (visited.has(node)) continue;",
+    "    visited.add(node);",
+    "    for (neighbor of graph[node]) {",
+    "      if (!visited.has(neighbor)) {",
+    "        stack.push(neighbor);",
+    "      }",
+    "    }",
+    "  }",
+    "  return visited;",
+    "}",
+  ],
 };
 
 // Generate algorithm-specific steps
@@ -32,6 +137,7 @@ const generateBubbleSortSteps = (): AlgorithmStep[] => {
     highlight: [],
     array: [...arr],
     sorted: [],
+    codeLine: [0],
   });
 
   for (let i = 0; i < arr.length - 1; i++) {
@@ -41,6 +147,7 @@ const generateBubbleSortSteps = (): AlgorithmStep[] => {
         highlight: [j, j + 1],
         array: [...arr],
         sorted: [...sorted],
+        codeLine: [2, 3],
       });
       
       if (arr[j] > arr[j + 1]) {
@@ -50,6 +157,7 @@ const generateBubbleSortSteps = (): AlgorithmStep[] => {
           highlight: [j, j + 1],
           array: [...arr],
           sorted: [...sorted],
+          codeLine: [3, 4],
         });
       } else {
         steps.push({
@@ -57,6 +165,7 @@ const generateBubbleSortSteps = (): AlgorithmStep[] => {
           highlight: [j, j + 1],
           array: [...arr],
           sorted: [...sorted],
+          codeLine: [3],
         });
       }
     }
@@ -69,6 +178,7 @@ const generateBubbleSortSteps = (): AlgorithmStep[] => {
     highlight: [],
     array: [...arr],
     sorted: Array.from({ length: arr.length }, (_, i) => i),
+    codeLine: [8],
   });
 
   return steps;
@@ -83,11 +193,11 @@ const generateQuickSortSteps = (): AlgorithmStep[] => {
     highlight: [],
     array: [...arr],
     sorted: [],
+    codeLine: [0, 1],
   });
 
   const quickSort = (array: number[], low: number, high: number, sorted: number[]) => {
     if (low < high) {
-      // Choose pivot (last element)
       const pivot = array[high];
       steps.push({
         description: `Choose pivot: ${pivot} (last element)`,
@@ -95,6 +205,7 @@ const generateQuickSortSteps = (): AlgorithmStep[] => {
         array: [...array],
         pivot: high,
         sorted: [...sorted],
+        codeLine: [2],
       });
 
       let i = low - 1;
@@ -106,6 +217,7 @@ const generateQuickSortSteps = (): AlgorithmStep[] => {
           array: [...array],
           pivot: high,
           sorted: [...sorted],
+          codeLine: [4, 5],
         });
         
         if (array[j] < pivot) {
@@ -118,12 +230,12 @@ const generateQuickSortSteps = (): AlgorithmStep[] => {
               array: [...array],
               pivot: high,
               sorted: [...sorted],
+              codeLine: [6],
             });
           }
         }
       }
       
-      // Place pivot in correct position
       [array[i + 1], array[high]] = [array[high], array[i + 1]];
       const pivotIndex = i + 1;
       sorted.push(pivotIndex);
@@ -133,6 +245,7 @@ const generateQuickSortSteps = (): AlgorithmStep[] => {
         highlight: [pivotIndex],
         array: [...array],
         sorted: [...sorted],
+        codeLine: [9, 10],
       });
 
       quickSort(array, low, pivotIndex - 1, sorted);
@@ -150,6 +263,7 @@ const generateQuickSortSteps = (): AlgorithmStep[] => {
     highlight: [],
     array: [11, 12, 22, 25, 34, 64, 90],
     sorted: Array.from({ length: arr.length }, (_, i) => i),
+    codeLine: [14],
   });
 
   return steps;
@@ -163,6 +277,7 @@ const generateMergeSortSteps = (): AlgorithmStep[] => {
     highlight: [],
     array: [64, 34, 25, 12, 22, 11, 90],
     sorted: [],
+    codeLine: [0, 1],
   });
 
   steps.push({
@@ -171,36 +286,42 @@ const generateMergeSortSteps = (): AlgorithmStep[] => {
     array: [64, 34, 25, 12, 22, 11, 90],
     left: 0,
     right: 2,
+    codeLine: [2, 3, 4],
   });
 
   steps.push({
     description: "Divide: Split [64, 34, 25] into [64] and [34, 25]",
     highlight: [0],
     array: [64, 34, 25, 12, 22, 11, 90],
+    codeLine: [3],
   });
 
   steps.push({
     description: "Divide: Split [34, 25] into [34] and [25]",
     highlight: [1, 2],
     array: [64, 34, 25, 12, 22, 11, 90],
+    codeLine: [3, 4],
   });
 
   steps.push({
     description: "Merge: Compare 34 and 25, 25 is smaller",
     highlight: [1, 2],
     array: [64, 34, 25, 12, 22, 11, 90],
+    codeLine: [10, 11],
   });
 
   steps.push({
     description: "Merge: [25, 34] is now sorted",
     highlight: [1, 2],
     array: [64, 25, 34, 12, 22, 11, 90],
+    codeLine: [12],
   });
 
   steps.push({
     description: "Merge: Compare 64 with [25, 34] - 25 < 64",
     highlight: [0, 1, 2],
     array: [64, 25, 34, 12, 22, 11, 90],
+    codeLine: [11, 12],
   });
 
   steps.push({
@@ -208,12 +329,14 @@ const generateMergeSortSteps = (): AlgorithmStep[] => {
     highlight: [0, 1, 2],
     array: [25, 34, 64, 12, 22, 11, 90],
     sorted: [0, 1, 2],
+    codeLine: [16],
   });
 
   steps.push({
     description: "Now sort right half: [12, 22, 11, 90]",
     highlight: [3, 4, 5, 6],
     array: [25, 34, 64, 12, 22, 11, 90],
+    codeLine: [4],
   });
 
   steps.push({
@@ -221,12 +344,14 @@ const generateMergeSortSteps = (): AlgorithmStep[] => {
     highlight: [3, 4, 5, 6],
     array: [25, 34, 64, 11, 12, 22, 90],
     sorted: [3, 4, 5, 6],
+    codeLine: [5],
   });
 
   steps.push({
     description: "Final merge: Compare elements from both halves",
     highlight: [0, 3],
     array: [25, 34, 64, 11, 12, 22, 90],
+    codeLine: [10, 11],
   });
 
   steps.push({
@@ -234,6 +359,7 @@ const generateMergeSortSteps = (): AlgorithmStep[] => {
     highlight: [],
     array: [11, 12, 22, 25, 34, 64, 90],
     sorted: Array.from({ length: 7 }, (_, i) => i),
+    codeLine: [16],
   });
 
   return steps;
@@ -249,6 +375,7 @@ const generateBinarySearchSteps = (): AlgorithmStep[] => {
     highlight: [],
     array: arr,
     sorted: Array.from({ length: arr.length }, (_, i) => i),
+    codeLine: [0, 1],
   });
 
   let left = 0;
@@ -264,6 +391,7 @@ const generateBinarySearchSteps = (): AlgorithmStep[] => {
       left,
       right,
       mid,
+      codeLine: [2, 3],
     });
 
     if (arr[mid] === target) {
@@ -273,6 +401,7 @@ const generateBinarySearchSteps = (): AlgorithmStep[] => {
         array: arr,
         found: true,
         mid,
+        codeLine: [4, 5],
       });
       break;
     } else if (arr[mid] < target) {
@@ -282,6 +411,7 @@ const generateBinarySearchSteps = (): AlgorithmStep[] => {
         array: arr,
         left: mid + 1,
         right,
+        codeLine: [7, 8],
       });
       left = mid + 1;
     } else {
@@ -291,6 +421,7 @@ const generateBinarySearchSteps = (): AlgorithmStep[] => {
         array: arr,
         left,
         right: mid - 1,
+        codeLine: [9, 10],
       });
       right = mid - 1;
     }
@@ -300,11 +431,6 @@ const generateBinarySearchSteps = (): AlgorithmStep[] => {
 };
 
 const generateBFSSteps = (): AlgorithmStep[] => {
-  // Graph: 0 -- 1 -- 2
-  //        |    |
-  //        3 -- 4 -- 5
-  //             |
-  //             6
   const steps: AlgorithmStep[] = [];
   
   steps.push({
@@ -312,6 +438,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     highlight: [],
     visited: [],
     queue: [],
+    codeLine: [0, 1, 2],
   });
 
   steps.push({
@@ -320,6 +447,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     visited: [],
     queue: [0],
     current: 0,
+    codeLine: [2],
   });
 
   steps.push({
@@ -328,6 +456,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     visited: [0],
     queue: [1, 3],
     current: 0,
+    codeLine: [4, 6, 7, 8, 9],
   });
 
   steps.push({
@@ -336,6 +465,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1],
     queue: [3, 2, 4],
     current: 1,
+    codeLine: [4, 6, 7, 8, 9],
   });
 
   steps.push({
@@ -344,6 +474,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 3],
     queue: [2, 4],
     current: 3,
+    codeLine: [4, 5, 6],
   });
 
   steps.push({
@@ -352,6 +483,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 3, 2],
     queue: [4],
     current: 2,
+    codeLine: [4, 6],
   });
 
   steps.push({
@@ -360,6 +492,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 3, 2, 4],
     queue: [5, 6],
     current: 4,
+    codeLine: [7, 8, 9],
   });
 
   steps.push({
@@ -368,6 +501,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 3, 2, 4, 5],
     queue: [6],
     current: 5,
+    codeLine: [4, 6],
   });
 
   steps.push({
@@ -376,6 +510,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 3, 2, 4, 5, 6],
     queue: [],
     current: 6,
+    codeLine: [4, 6],
   });
 
   steps.push({
@@ -383,6 +518,7 @@ const generateBFSSteps = (): AlgorithmStep[] => {
     highlight: [],
     visited: [0, 1, 3, 2, 4, 5, 6],
     queue: [],
+    codeLine: [13],
   });
 
   return steps;
@@ -396,6 +532,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     highlight: [],
     visited: [],
     stack: [],
+    codeLine: [0, 1, 2],
   });
 
   steps.push({
@@ -404,6 +541,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     visited: [],
     stack: [0],
     current: 0,
+    codeLine: [2],
   });
 
   steps.push({
@@ -412,6 +550,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     visited: [0],
     stack: [1],
     current: 0,
+    codeLine: [4, 6, 7, 8, 9],
   });
 
   steps.push({
@@ -420,6 +559,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1],
     stack: [2, 4],
     current: 1,
+    codeLine: [4, 6, 7, 8, 9],
   });
 
   steps.push({
@@ -428,6 +568,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 2],
     stack: [4],
     current: 2,
+    codeLine: [4, 5, 6],
   });
 
   steps.push({
@@ -436,6 +577,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 2, 4],
     stack: [5, 6, 3],
     current: 4,
+    codeLine: [7, 8, 9],
   });
 
   steps.push({
@@ -444,6 +586,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 2, 4, 3],
     stack: [5, 6],
     current: 3,
+    codeLine: [4, 5, 6],
   });
 
   steps.push({
@@ -452,6 +595,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 2, 4, 3, 6],
     stack: [5],
     current: 6,
+    codeLine: [4, 5, 6],
   });
 
   steps.push({
@@ -460,6 +604,7 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     visited: [0, 1, 2, 4, 3, 6, 5],
     stack: [],
     current: 5,
+    codeLine: [4, 5, 6],
   });
 
   steps.push({
@@ -467,13 +612,13 @@ const generateDFSSteps = (): AlgorithmStep[] => {
     highlight: [],
     visited: [0, 1, 2, 4, 3, 6, 5],
     stack: [],
+    codeLine: [13],
   });
 
   return steps;
 };
 
 const GraphVisualization = ({ step }: { step: AlgorithmStep }) => {
-  // Node positions for the graph
   const nodes = [
     { id: 0, x: 50, y: 30 },
     { id: 1, x: 150, y: 30 },
@@ -491,7 +636,6 @@ const GraphVisualization = ({ step }: { step: AlgorithmStep }) => {
   return (
     <div className="flex flex-col items-center gap-4">
       <svg width="320" height="220" className="mx-auto">
-        {/* Edges */}
         {edges.map(([from, to], i) => (
           <line
             key={i}
@@ -505,7 +649,6 @@ const GraphVisualization = ({ step }: { step: AlgorithmStep }) => {
           />
         ))}
         
-        {/* Nodes */}
         {nodes.map((node) => {
           const isVisited = step.visited?.includes(node.id);
           const isCurrent = step.current === node.id;
@@ -545,7 +688,6 @@ const GraphVisualization = ({ step }: { step: AlgorithmStep }) => {
         })}
       </svg>
       
-      {/* Queue/Stack display */}
       <div className="flex gap-4 text-sm">
         {step.queue !== undefined && (
           <div className="flex items-center gap-2">
@@ -571,6 +713,52 @@ const GraphVisualization = ({ step }: { step: AlgorithmStep }) => {
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+const CodePanel = ({ 
+  algorithm, 
+  highlightedLines 
+}: { 
+  algorithm: string; 
+  highlightedLines: number[];
+}) => {
+  const code = algorithmCode[algorithm] || [];
+  
+  return (
+    <div className="bg-card/80 border border-border rounded-lg overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-2 bg-secondary/50 border-b border-border">
+        <Code className="w-4 h-4 text-primary" />
+        <span className="text-sm font-medium">Pseudocode</span>
+      </div>
+      <div className="p-4 overflow-x-auto max-h-[300px] overflow-y-auto">
+        <pre className="text-sm font-mono">
+          {code.map((line, i) => {
+            const isHighlighted = highlightedLines.includes(i);
+            return (
+              <motion.div
+                key={i}
+                className={`px-2 py-0.5 rounded transition-all ${
+                  isHighlighted 
+                    ? "bg-primary/20 border-l-2 border-primary text-foreground" 
+                    : "text-muted-foreground"
+                }`}
+                animate={{
+                  backgroundColor: isHighlighted ? "hsl(var(--primary) / 0.2)" : "transparent",
+                }}
+              >
+                <span className="inline-block w-6 text-right mr-3 text-muted-foreground/50 select-none">
+                  {i + 1}
+                </span>
+                <span className={isHighlighted ? "text-foreground" : ""}>
+                  {line || " "}
+                </span>
+              </motion.div>
+            );
+          })}
+        </pre>
       </div>
     </div>
   );
@@ -633,13 +821,13 @@ export const Visualizer = () => {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-4 gap-6">
           {/* Algorithm Selection */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="glass-card p-6 rounded-xl"
+            className="glass-card p-4 rounded-xl"
           >
             <h3 className="text-lg font-semibold mb-4">Select Algorithm</h3>
             <div className="space-y-2">
@@ -647,7 +835,7 @@ export const Visualizer = () => {
                 <button
                   key={algo}
                   onClick={() => handleAlgoChange(algo)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all ${
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
                     selectedAlgo === algo
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary/50 hover:bg-secondary text-foreground"
@@ -669,7 +857,7 @@ export const Visualizer = () => {
             viewport={{ once: true }}
             className="lg:col-span-2 glass-card p-6 rounded-xl"
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">{selectedAlgo}</h3>
               <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" onClick={handleReset}>
@@ -693,11 +881,11 @@ export const Visualizer = () => {
             </div>
 
             {/* Visualization */}
-            <div className="min-h-[200px] flex items-center justify-center mb-8">
+            <div className="min-h-[200px] flex items-center justify-center mb-6">
               {isGraphAlgo ? (
                 <GraphVisualization step={currentStep} />
               ) : (
-                <div className="flex justify-center gap-3 flex-wrap">
+                <div className="flex justify-center gap-2 flex-wrap">
                   {(currentStep.array || [64, 34, 25, 12, 22, 11, 90]).map((val, i) => {
                     const isHighlighted = currentStep.highlight.includes(i);
                     const isSorted = currentStep.sorted?.includes(i);
@@ -711,7 +899,7 @@ export const Visualizer = () => {
                     return (
                       <motion.div
                         key={i}
-                        className={`w-12 h-12 flex items-center justify-center rounded-lg font-mono font-bold border-2 transition-all ${
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg font-mono font-bold text-sm border-2 transition-all ${
                           isFound
                             ? "bg-green-500 border-green-400 text-white"
                             : isPivot
@@ -738,8 +926,8 @@ export const Visualizer = () => {
             </div>
 
             {/* Step description */}
-            <div className="bg-secondary/50 rounded-lg p-4 mb-6">
-              <p className="text-sm font-mono text-center">
+            <div className="bg-secondary/50 rounded-lg p-3 mb-4">
+              <p className="text-xs font-mono text-center">
                 Step {step + 1}/{steps.length}: {currentStep.description}
               </p>
             </div>
@@ -771,6 +959,18 @@ export const Visualizer = () => {
                 </Button>
               </div>
             </div>
+          </motion.div>
+
+          {/* Code Panel */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <CodePanel 
+              algorithm={selectedAlgo} 
+              highlightedLines={currentStep.codeLine || []} 
+            />
           </motion.div>
         </div>
       </div>
