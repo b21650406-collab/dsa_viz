@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Code2, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/ui/theme-toggle";
 
 const navItems = [
   { label: "Topics", href: "#topics" },
@@ -46,6 +47,7 @@ export const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <Button variant="ghost" size="sm">
               Sign In
             </Button>
@@ -78,7 +80,8 @@ export const Navbar = () => {
                 {item.label}
               </a>
             ))}
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-4 items-center">
+              <ThemeToggle />
               <Button variant="ghost" size="sm" className="flex-1">
                 Sign In
               </Button>

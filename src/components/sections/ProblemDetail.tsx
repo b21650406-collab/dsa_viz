@@ -1,5 +1,14 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, Target, Lightbulb, AlertTriangle, Zap, ChevronDown, ChevronUp } from "lucide-react";
+import { 
+  ArrowLeft, 
+  Clock, 
+  Target, 
+  Lightbulb, 
+  Zap, 
+  ChevronDown, 
+  ChevronUp, 
+  ExternalLink 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Problem, Topic } from "@/data/dsaContent";
 import { useState } from "react";
@@ -37,13 +46,14 @@ const ApproachCard = ({
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
       className="glass-card rounded-xl overflow-hidden"
     >
       <button
         onClick={onToggle}
+        aria-expanded={isExpanded}
+        aria-controls={`approach-${index}`}
         className="w-full p-4 flex items-center justify-between hover:bg-secondary/50 transition-colors"
       >
         <div className="flex items-center gap-3">
@@ -55,22 +65,50 @@ const ApproachCard = ({
             <p className="text-sm text-muted-foreground">{approach.idea}</p>
           </div>
         </div>
+
         {isExpanded ? (
           <ChevronUp className="w-5 h-5 text-muted-foreground" />
         ) : (
           <ChevronDown className="w-5 h-5 text-muted-foreground" />
         )}
       </button>
-      
+
       {isExpanded && (
         <motion.div
+          id={`approach-${index}`}
+          role="region"
+          aria-labelledby={`approach-btn-${index}`}
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           className="px-4 pb-4 border-t border-border"
         >
-          <div className="pt-4 space-y-4">
-            {approach.steps && approach.steps.length > 0 && (
+          <div className="space-y-4">
+
+            {approach.logic && (
+              <div className="p-3 bg-secondary/50 rounded-lg">
+                <h5 className="text-sm font-medium mb-1">Logic</h5>
+                <pre className="text-xs font-mono text-muted-foreground whitespace-pre-wrap">
+                  {approach.logic}
+                </pre>
+              </div>
+            )}
+
+            {approach.tracking && (
+              <div className="p-3 bg-secondary/50 rounded-lg">
+                <h5 className="text-sm font-medium mb-1">What to Track</h5>
+                <p className="text-sm text-muted-foreground">{approach.tracking}</p>
+              </div>
+            )}
+
+            {approach.notes && (
+              <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
+                <h5 className="text-sm font-medium mb-1">Notes</h5>
+                <p className="text-sm">{approach.notes}</p>
+              </div>
+            )}
+
+            {approach.steps?.length ? (
               <div>
                 <h5 className="text-sm font-medium mb-2 text-muted-foreground">Steps</h5>
                 <ol className="space-y-2">
@@ -84,8 +122,8 @@ const ApproachCard = ({
                   ))}
                 </ol>
               </div>
-            )}
-            
+            ) : null}
+
             <div className="grid grid-cols-2 gap-4">
               <div className="p-3 bg-secondary/50 rounded-lg">
                 <div className="flex items-center gap-2 mb-1">
@@ -94,6 +132,7 @@ const ApproachCard = ({
                 </div>
                 <span className="font-mono text-sm">{approach.time_complexity}</span>
               </div>
+
               <div className="p-3 bg-secondary/50 rounded-lg">
                 <div className="flex items-center gap-2 mb-1">
                   <Target className="w-4 h-4 text-accent" />
@@ -102,7 +141,7 @@ const ApproachCard = ({
                 <span className="font-mono text-sm">{approach.space_complexity}</span>
               </div>
             </div>
-            
+
             {approach.when_to_use && (
               <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
                 <div className="flex items-center gap-2 mb-1">
@@ -112,6 +151,7 @@ const ApproachCard = ({
                 <p className="text-sm">{approach.when_to_use}</p>
               </div>
             )}
+
           </div>
         </motion.div>
       )}
@@ -139,11 +179,22 @@ export const ProblemDetail = ({ problem, topic, onBack }: ProblemDetailProps) =>
           
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <DifficultyBadge level={problem.difficulty} />
+
             <span className="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">
-              {problem.core_pattern}
+              {problem.pattern || problem.core_pattern}
             </span>
+
+            {problem.acceptance_rate && (
+              <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm rounded-full">
+                Acceptance: {problem.acceptance_rate}
+              </span>
+            )}
+
             {problem.tags?.map(tag => (
-              <span key={tag} className="px-3 py-1 bg-secondary text-muted-foreground text-sm rounded-full">
+              <span 
+                key={tag} 
+                className="px-3 py-1 bg-secondary text-muted-foreground text-sm rounded-full"
+              >
                 {tag}
               </span>
             ))}
@@ -164,7 +215,6 @@ export const ProblemDetail = ({ problem, topic, onBack }: ProblemDetailProps) =>
           )}
         </motion.div>
 
-        {/* Approaches */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -177,21 +227,28 @@ export const ProblemDetail = ({ problem, topic, onBack }: ProblemDetailProps) =>
           </h2>
           
           <div className="space-y-4">
-            {problem.approaches?.map((approach, index) => (
-              <ApproachCard
-                key={approach.name}
-                approach={approach}
-                index={index}
-                isExpanded={expandedApproach === index}
-                onToggle={() => setExpandedApproach(expandedApproach === index ? null : index)}
-              />
-            )) || (
-              <p className="text-muted-foreground">No approaches documented yet.</p>
+            {problem.approaches?.length ? (
+              problem.approaches.map((approach, index) => (
+                <ApproachCard
+                  key={approach.name}
+                  approach={approach}
+                  index={index}
+                  isExpanded={expandedApproach === index}
+                  onToggle={() => 
+                    setExpandedApproach(
+                      expandedApproach === index ? null : index
+                    )
+                  }
+                />
+              ))
+            ) : (
+              <p className="text-muted-foreground">
+                No approaches documented yet.
+              </p>
             )}
           </div>
         </motion.div>
 
-        {/* Complexity Summary */}
         {problem.complexity_summary && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -207,7 +264,6 @@ export const ProblemDetail = ({ problem, topic, onBack }: ProblemDetailProps) =>
           </motion.div>
         )}
 
-        {/* Interview Tip */}
         {problem.interview_tip && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -222,6 +278,36 @@ export const ProblemDetail = ({ problem, topic, onBack }: ProblemDetailProps) =>
             <p className="text-foreground">{problem.interview_tip}</p>
           </motion.div>
         )}
+
+        {problem.external_links?.length ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+            className="glass-card p-4 rounded-xl mt-6"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <ExternalLink className="w-5 h-5 text-primary" />
+              <span className="font-medium">External Resources</span>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              {problem.external_links.map((l, i) => (
+                <a
+                  key={i}
+                  href={l.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="text-sm text-primary hover:underline flex items-center gap-2"
+                  aria-label={`Open ${l.label} for ${problem.title}`}
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        ) : null}
       </div>
     </section>
   );

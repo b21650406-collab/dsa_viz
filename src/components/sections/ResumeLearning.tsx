@@ -46,7 +46,7 @@ export const ResumeLearning = ({ recentContent, onSelectContent }: ResumeLearnin
           </p>
         </motion.div>
 
-        {recentContent.length === 0 ? (
+        {recentContent.filter(c => c.type === 'topic').length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -68,7 +68,9 @@ export const ResumeLearning = ({ recentContent, onSelectContent }: ResumeLearnin
           </motion.div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {recentContent.map((content, index) => (
+            {recentContent
+              .filter((c) => c.type === 'topic')
+              .map((content, index) => (
               <motion.div
                 key={`${content.type}-${content.id}`}
                 initial={{ opacity: 0, y: 20 }}
@@ -105,6 +107,7 @@ export const ResumeLearning = ({ recentContent, onSelectContent }: ResumeLearnin
                   {content.title}
                 </h3>
 
+                {/* topicTitle is not relevant when showing topics-only, but keep if present */}
                 {content.topicTitle && (
                   <p className="text-sm text-muted-foreground mb-4">
                     {content.topicTitle}

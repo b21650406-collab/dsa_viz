@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Code, Pause, Play, RotateCcw, SkipForward } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import ThemeToggle from "@/components/ui/theme-toggle";
 const algorithms = ["Bubble Sort", "Quick Sort", "Merge Sort", "Binary Search", "BFS", "DFS"];
 
 type AlgorithmStep = {
@@ -22,108 +23,120 @@ type AlgorithmStep = {
   codeLine?: number[];
 };
 
-// Algorithm code snippets
-const algorithmCode: Record<string, string[]> = {
-  "Bubble Sort": [
-    "function bubbleSort(arr) {",
-    "  for (let i = 0; i < n-1; i++) {",
-    "    for (let j = 0; j < n-i-1; j++) {",
-    "      if (arr[j] > arr[j+1]) {",
-    "        swap(arr[j], arr[j+1]);",
-    "      }",
-    "    }",
-    "  }",
-    "  return arr;",
-    "}",
-  ],
-  "Quick Sort": [
-    "function quickSort(arr, low, high) {",
-    "  if (low < high) {",
-    "    pivot = arr[high];",
-    "    i = low - 1;",
-    "    for (j = low; j < high; j++) {",
-    "      if (arr[j] < pivot) {",
-    "        i++; swap(arr[i], arr[j]);",
-    "      }",
-    "    }",
-    "    swap(arr[i+1], arr[high]);",
-    "    pi = i + 1;",
-    "    quickSort(arr, low, pi-1);",
-    "    quickSort(arr, pi+1, high);",
-    "  }",
-    "}",
-  ],
-  "Merge Sort": [
-    "function mergeSort(arr) {",
-    "  if (arr.length <= 1) return arr;",
-    "  mid = arr.length / 2;",
-    "  left = mergeSort(arr[0..mid]);",
-    "  right = mergeSort(arr[mid..n]);",
-    "  return merge(left, right);",
-    "}",
-    "",
-    "function merge(left, right) {",
-    "  result = [];",
-    "  while (left && right) {",
-    "    if (left[0] <= right[0])",
-    "      result.push(left.shift());",
-    "    else",
-    "      result.push(right.shift());",
-    "  }",
-    "  return [...result, ...left, ...right];",
-    "}",
-  ],
-  "Binary Search": [
-    "function binarySearch(arr, target) {",
-    "  left = 0, right = arr.length - 1;",
-    "  while (left <= right) {",
-    "    mid = Math.floor((left+right)/2);",
-    "    if (arr[mid] === target) {",
-    "      return mid; // Found!",
-    "    }",
-    "    if (arr[mid] < target) {",
-    "      left = mid + 1;",
-    "    } else {",
-    "      right = mid - 1;",
-    "    }",
-    "  }",
-    "  return -1; // Not found",
-    "}",
-  ],
-  "BFS": [
-    "function BFS(graph, start) {",
-    "  visited = new Set();",
-    "  queue = [start];",
-    "  while (queue.length > 0) {",
-    "    node = queue.shift();",
-    "    if (visited.has(node)) continue;",
-    "    visited.add(node);",
-    "    for (neighbor of graph[node]) {",
-    "      if (!visited.has(neighbor)) {",
-    "        queue.push(neighbor);",
-    "      }",
-    "    }",
-    "  }",
-    "  return visited;",
-    "}",
-  ],
-  "DFS": [
-    "function DFS(graph, start) {",
-    "  visited = new Set();",
-    "  stack = [start];",
-    "  while (stack.length > 0) {",
-    "    node = stack.pop();",
-    "    if (visited.has(node)) continue;",
-    "    visited.add(node);",
-    "    for (neighbor of graph[node]) {",
-    "      if (!visited.has(neighbor)) {",
-    "        stack.push(neighbor);",
-    "      }",
-    "    }",
-    "  }",
-    "  return visited;",
-    "}",
-  ],
+// Algorithm code snippets organized by algorithm -> approach
+const algorithmCode: Record<string, Record<string, string[]>> = {
+  "Bubble Sort": {
+    Default: [
+      "function bubbleSort(arr) {",
+      "  for (let i = 0; i < n-1; i++) {",
+      "    for (let j = 0; j < n-i-1; j++) {",
+      "      if (arr[j] > arr[j+1]) {",
+      "        swap(arr[j], arr[j+1]);",
+      "      }",
+      "    }",
+      "  }",
+      "  return arr;",
+      "}",
+    ],
+  },
+  "Quick Sort": {
+    Default: [
+      "function quickSort(arr, low, high) {",
+      "  if (low < high) {",
+      "    pivot = arr[high];",
+      "    i = low - 1;",
+      "    for (j = low; j < high; j++) {",
+      "      if (arr[j] < pivot) {",
+      "        i++; swap(arr[i], arr[j]);",
+      "      }",
+      "    }",
+      "    swap(arr[i+1], arr[high]);",
+      "    pi = i + 1;",
+      "    quickSort(arr, low, pi-1);",
+      "    quickSort(arr, pi+1, high);",
+      "  }",
+      "}",
+    ],
+  },
+  "Merge Sort": {
+    Default: [
+      "function mergeSort(arr) {",
+      "  if (arr.length <= 1) return arr;",
+      "  mid = arr.length / 2;",
+      "  left = mergeSort(arr[0..mid]);",
+      "  right = mergeSort(arr[mid..n]);",
+      "  return merge(left, right);",
+      "}",
+      "",
+      "function merge(left, right) {",
+      "  result = [];",
+      "  while (left && right) {",
+      "    if (left[0] <= right[0])",
+      "      result.push(left.shift());",
+      "    else",
+      "      result.push(right.shift());",
+      "  }",
+      "  return [...result, ...left, ...right];",
+      "}",
+    ],
+  },
+  "Binary Search": {
+    Default: [
+      "function binarySearch(arr, target) {",
+      "  left = 0, right = arr.length - 1;",
+      "  while (left <= right) {",
+      "    mid = Math.floor((left+right)/2);",
+      "    if (arr[mid] === target) {",
+      "      return mid; // Found!",
+      "    }",
+      "    if (arr[mid] < target) {",
+      "      left = mid + 1;",
+      "    } else {",
+      "      right = mid - 1;",
+      "    }",
+      "  }",
+      "  return -1; // Not found",
+      "}",
+    ],
+  },
+  "BFS": {
+    Default: [
+      "function BFS(graph, start) {",
+      "  visited = new Set();",
+      "  queue = [start];",
+      "  while (queue.length > 0) {",
+      "    node = queue.shift();",
+      "    if (visited.has(node)) continue;",
+      "    visited.add(node);",
+      "    for (neighbor of graph[node]) {",
+      "      if (!visited.has(neighbor)) {",
+      "        queue.push(neighbor);",
+      "      }",
+      "    }",
+      "  }",
+      "  return visited;",
+      "}",
+    ],
+  },
+  "DFS": {
+    Default: [
+      "function DFS(graph, start) {",
+      "  visited = new Set();",
+      "  stack = [start];",
+      "  while (stack.length > 0) {",
+      "    node = stack.pop();",
+      "    if (visited.has(node)) continue;",
+      "    visited.add(node);",
+      "    for (neighbor of graph[node]) {",
+      "      if (!visited.has(neighbor)) {",
+      "        stack.push(neighbor);",
+      "      }",
+      "    }",
+      "  }",
+      "  return visited;",
+      "}",
+    ],
+  },
 };
 
 // Generate algorithm-specific steps
@@ -719,19 +732,18 @@ const GraphVisualization = ({ step }: { step: AlgorithmStep }) => {
 };
 
 const CodePanel = ({ 
-  algorithm, 
+  code, 
   highlightedLines 
 }: { 
-  algorithm: string; 
+  code: string[]; 
   highlightedLines: number[];
 }) => {
-  const code = algorithmCode[algorithm] || [];
   
   return (
-    <div className="bg-card/80 border border-border rounded-lg overflow-hidden">
+    <div className="bg-card/80 border border-border rounded-lg overflow-hidden" role="region" aria-labelledby="pseudocode-heading">
       <div className="flex items-center gap-2 px-4 py-2 bg-secondary/50 border-b border-border">
         <Code className="w-4 h-4 text-primary" />
-        <span className="text-sm font-medium">Pseudocode</span>
+        <span id="pseudocode-heading" className="text-sm font-medium">Pseudocode</span>
       </div>
       <div className="p-4 overflow-x-auto max-h-[300px] overflow-y-auto">
         <pre className="text-sm font-mono">
@@ -769,6 +781,7 @@ export const Visualizer = () => {
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1); // 0.5x to 3x
+  const [selectedApproach, setSelectedApproach] = useState<string>("Default");
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const steps = useMemo(() => {
@@ -793,6 +806,12 @@ export const Visualizer = () => {
   const currentStep = steps[step] || steps[0];
   const isGraphAlgo = selectedAlgo === "BFS" || selectedAlgo === "DFS";
 
+  // reset approach when algorithm changes
+  useEffect(() => {
+    const names = Object.keys(algorithmCode[selectedAlgo] || {});
+    setSelectedApproach(names[0] || "Default");
+  }, [selectedAlgo]);
+
   // Auto-play logic
   useEffect(() => {
     if (isPlaying) {
@@ -811,6 +830,30 @@ export const Visualizer = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [isPlaying, speed, steps.length]);
+
+  // Keyboard shortcuts: Space toggles play/pause, arrows navigate, 'r' resets
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        setIsPlaying((p) => !p);
+      }
+      if (e.key === "ArrowRight") {
+        setStep((s) => Math.min(steps.length - 1, s + 1));
+        setIsPlaying(false);
+      }
+      if (e.key === "ArrowLeft") {
+        setStep((s) => Math.max(0, s - 1));
+        setIsPlaying(false);
+      }
+      if (e.key.toLowerCase() === "r") {
+        handleReset();
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [steps.length]);
 
   const handleReset = () => {
     setStep(0);
@@ -881,6 +924,7 @@ export const Visualizer = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">{selectedAlgo}</h3>
               <div className="flex items-center gap-4">
+                <ThemeToggle />
                 {/* Speed Control */}
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">Speed:</span>
@@ -895,13 +939,16 @@ export const Visualizer = () => {
                   <span className="text-xs font-mono w-8">{speed}x</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon" onClick={handleReset}>
+                  <Button variant="ghost" size="icon" onClick={handleReset} aria-label="Reset visualization" title="Reset">
                     <RotateCcw className="w-4 h-4" />
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="icon"
                     onClick={() => setIsPlaying(!isPlaying)}
+                    aria-pressed={isPlaying}
+                    aria-label={isPlaying ? "Pause animation" : "Play animation"}
+                    title={isPlaying ? "Pause" : "Play"}
                   >
                     {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                   </Button>
@@ -910,6 +957,8 @@ export const Visualizer = () => {
                     size="icon"
                     onClick={() => setStep(Math.min(steps.length - 1, step + 1))}
                     disabled={isPlaying}
+                    aria-label="Advance one step"
+                    title="Next step"
                   >
                     <SkipForward className="w-4 h-4" />
                   </Button>
@@ -962,9 +1011,9 @@ export const Visualizer = () => {
               )}
             </div>
 
-            {/* Step description */}
+            {/* Step description (announced to assistive tech) */}
             <div className="bg-secondary/50 rounded-lg p-3 mb-4">
-              <p className="text-xs font-mono text-center">
+              <p className="text-xs font-mono text-center" aria-live="polite" aria-atomic="true" role="status">
                 Step {step + 1}/{steps.length}: {currentStep.description}
               </p>
             </div>
@@ -1004,9 +1053,27 @@ export const Visualizer = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <CodePanel 
-              algorithm={selectedAlgo} 
-              highlightedLines={currentStep.codeLine || []} 
+            {/* Approach selector + pseudocode panel */}
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <label htmlFor="approach-select" className="text-sm text-muted-foreground">Pseudocode</label>
+              <div>
+                <select
+                  id="approach-select"
+                  aria-label="Select pseudocode approach"
+                  value={selectedApproach}
+                  onChange={(e) => setSelectedApproach(e.target.value)}
+                  className="bg-secondary/50 border border-border rounded px-2 py-1 text-sm"
+                >
+                  {(Object.keys(algorithmCode[selectedAlgo] || {})).map((name) => (
+                    <option key={name} value={name}>{name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <CodePanel
+              code={(algorithmCode[selectedAlgo] && algorithmCode[selectedAlgo][selectedApproach]) || (algorithmCode[selectedAlgo] && algorithmCode[selectedAlgo].Default) || []}
+              highlightedLines={currentStep.codeLine || []}
             />
           </motion.div>
         </div>
