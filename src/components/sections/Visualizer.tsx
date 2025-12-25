@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Code, Pause, Play, RotateCcw, SkipForward } from "lucide-react";
-
+import { Slider } from "@/components/ui/slider";
 const algorithms = ["Bubble Sort", "Quick Sort", "Merge Sort", "Binary Search", "BFS", "DFS"];
 
 type AlgorithmStep = {
@@ -768,6 +768,8 @@ export const Visualizer = () => {
   const [selectedAlgo, setSelectedAlgo] = useState("Bubble Sort");
   const [step, setStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [speed, setSpeed] = useState(1); // 0.5x to 3x
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const steps = useMemo(() => {
     switch (selectedAlgo) {
@@ -790,6 +792,25 @@ export const Visualizer = () => {
 
   const currentStep = steps[step] || steps[0];
   const isGraphAlgo = selectedAlgo === "BFS" || selectedAlgo === "DFS";
+
+  // Auto-play logic
+  useEffect(() => {
+    if (isPlaying) {
+      const delay = 1000 / speed;
+      intervalRef.current = setInterval(() => {
+        setStep(prev => {
+          if (prev >= steps.length - 1) {
+            setIsPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, delay);
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPlaying, speed, steps.length]);
 
   const handleReset = () => {
     setStep(0);
@@ -859,24 +880,40 @@ export const Visualizer = () => {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">{selectedAlgo}</h3>
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon" onClick={handleReset}>
-                  <RotateCcw className="w-4 h-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => setIsPlaying(!isPlaying)}
-                >
-                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => setStep(Math.min(steps.length - 1, step + 1))}
-                >
-                  <SkipForward className="w-4 h-4" />
-                </Button>
+              <div className="flex items-center gap-4">
+                {/* Speed Control */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Speed:</span>
+                  <Slider
+                    value={[speed]}
+                    onValueChange={([v]) => setSpeed(v)}
+                    min={0.5}
+                    max={3}
+                    step={0.5}
+                    className="w-20"
+                  />
+                  <span className="text-xs font-mono w-8">{speed}x</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="icon" onClick={handleReset}>
+                    <RotateCcw className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => setIsPlaying(!isPlaying)}
+                  >
+                    {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => setStep(Math.min(steps.length - 1, step + 1))}
+                    disabled={isPlaying}
+                  >
+                    <SkipForward className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
