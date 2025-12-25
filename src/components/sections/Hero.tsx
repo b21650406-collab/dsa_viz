@@ -3,7 +3,11 @@ import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ArrayVisualization } from "@/components/visualizations/ArrayVisualization";
 
-export const Hero = () => {
+type HeroProps = {
+  onStartLearning?: () => void;
+};
+
+export const Hero = ({ onStartLearning }: HeroProps) => {
   return (
     <section className="relative min-h-screen pt-24 pb-16 overflow-hidden">
       {/* Background effects */}
@@ -40,7 +44,7 @@ export const Hero = () => {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <Button variant="hero" size="xl">
+              <Button variant="hero" size="xl" onClick={onStartLearning}>
                 Start Learning
                 <ArrowRight className="w-5 h-5" />
               </Button>
