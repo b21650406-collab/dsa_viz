@@ -7,6 +7,9 @@ export type Approach = {
   time_complexity: string;
   space_complexity: string;
   when_to_use?: string;
+  notes?: string;
+  logic?: string;
+  tracking?: string;
 };
 
 export type Problem = {
@@ -14,11 +17,14 @@ export type Problem = {
   title: string;
   why_it_matters?: string;
   core_pattern: string;
+  pattern?: string;
   tags?: string[];
   difficulty: "Easy" | "Medium" | "Hard";
+  acceptance_rate?: string;
   approaches?: Approach[];
   complexity_summary?: string;
   interview_tip?: string;
+  external_links?: { label: string; url: string }[];
 };
 
 export type DifficultySection = {
@@ -51,6 +57,7 @@ export const dsaContent: Topic[] = [
             core_pattern: "Hash Map",
             tags: ["array", "hashing"],
             difficulty: "Easy",
+            acceptance_rate: "49.5%",
             approaches: [
               {
                 name: "Brute Force",
@@ -70,7 +77,11 @@ export const dsaContent: Topic[] = [
               }
             ],
             complexity_summary: "Improves from O(n²) to O(n)",
-            interview_tip: "Explain lookup and collision handling."
+            interview_tip: "Explain lookup and collision handling.",
+            external_links: [
+              { label: "LeetCode", url: "https://leetcode.com/problems/two-sum/" },
+              { label: "GeeksforGeeks", url: "https://www.geeksforgeeks.org/two-sum/" }
+            ]
           },
           {
             id: "contains_duplicate",
@@ -154,17 +165,36 @@ export const dsaContent: Topic[] = [
             title: "Maximum Subarray",
             core_pattern: "Kadane",
             difficulty: "Medium",
+            acceptance_rate: "34.2%",
             why_it_matters: "Classic DP problem, tests understanding of optimal substructure.",
             approaches: [
               {
+                name: "Brute Force",
+                idea: "Try every subarray and compute its sum",
+                steps: ["For i from 0..n-1", "For j from i..n-1", "Compute sum of arr[i..j] and track max"],
+                time_complexity: "O(n²) to O(n³) depending on whether sums are reused",
+                space_complexity: "O(1)",
+                when_to_use: "Only for tiny inputs or to reason about correctness"
+              },
+              {
+                name: "Divide and Conquer",
+                idea: "Recurse on halves and combine max crossing subarray",
+                steps: ["Divide array in half", "Compute max in left, right and crossing middle", "Return max of three"],
+                time_complexity: "O(n log n)",
+                space_complexity: "O(log n) recursion",
+                when_to_use: "Good to reason about recursive patterns and complexity trade-offs"
+              },
+              {
                 name: "Kadane's Algorithm",
-                idea: "Track max ending here and global max",
-                steps: ["Initialize maxSoFar and maxEndingHere", "For each element, maxEndingHere = max(element, maxEndingHere + element)", "Update maxSoFar"],
+                idea: "Greedy / dynamic approach tracking best ending-at index",
+                steps: ["Initialize maxSoFar and maxEndingHere to arr[0]", "For each element, maxEndingHere = max(element, maxEndingHere + element)", "Update maxSoFar = max(maxSoFar, maxEndingHere)"],
                 time_complexity: "O(n)",
-                space_complexity: "O(1)"
+                space_complexity: "O(1)",
+                when_to_use: "Preferred solution in interviews for O(n) time and O(1) space"
               }
             ],
-            interview_tip: "Explain why greedy works here."
+            complexity_summary: "Brute force is quadratic; divide-and-conquer gives O(n log n); Kadane gives optimal O(n) and O(1) space.",
+            interview_tip: "Start by describing brute force and then show how Kadane reduces overlapping work to O(n)."
           },
           {
             id: "three_sum",
@@ -233,6 +263,7 @@ export const dsaContent: Topic[] = [
             title: "Trapping Rain Water",
             core_pattern: "Two Pointer / Prefix Max",
             difficulty: "Hard",
+            acceptance_rate: "40.6%",
             why_it_matters: "Tests ability to optimize space from O(n) to O(1).",
             approaches: [
               {
@@ -248,7 +279,11 @@ export const dsaContent: Topic[] = [
                 space_complexity: "O(1)"
               }
             ],
-            interview_tip: "Start with brute force, optimize to two pointers."
+            interview_tip: "Start with brute force, optimize to two pointers.",
+            external_links: [
+              { label: "LeetCode", url: "https://leetcode.com/problems/trapping-rain-water/" },
+              { label: "GeeksforGeeks", url: "https://www.geeksforgeeks.org/trapping-rain-water/" }
+            ]
           },
           {
             id: "minimum_window_substring",
@@ -398,6 +433,10 @@ export const dsaContent: Topic[] = [
         level: "Hard",
         problems: [
           { id: "median_two_arrays", title: "Median of Two Sorted Arrays", core_pattern: "Binary Search", difficulty: "Hard", approaches: [{ name: "Binary Search on Partition", idea: "Binary search to find correct partition", time_complexity: "O(log min(n,m))", space_complexity: "O(1)" }], interview_tip: "Practice the edge cases thoroughly." },
+          { id: "median_two_arrays_alt", title: "Median of Two Sorted Arrays (Explanation)", core_pattern: "Partitioning / Kth Element", difficulty: "Hard", approaches: [
+            { name: "Merge-like (conceptual)", idea: "Merge first k elements from both arrays until median", steps: ["Walk two pointers merging until median position"], time_complexity: "O(n + m)", space_complexity: "O(1)", when_to_use: "Simple to explain but not optimal" },
+            { name: "Binary Search Partition", idea: "Binary search on smaller array to find partition where left max ≤ right min", steps: ["Ensure A is smaller", "Binary search cut point", "Compute left/right max/min and check condition"], time_complexity: "O(log min(n,m))", space_complexity: "O(1)", when_to_use: "Use in interviews for optimal solution" }
+          ], complexity_summary: "Naive merge is linear; partitioning yields O(log min(n,m)).", interview_tip: "Carefully reason about offsets and edge cases (empty partitions)." },
           { id: "aggressive_cows", title: "Aggressive Cows", core_pattern: "Binary Search on Answer", difficulty: "Hard", approaches: [{ name: "Binary Search on Distance", idea: "Binary search on minimum distance, validate placement", time_complexity: "O(n log d)", space_complexity: "O(1)" }] },
           { id: "koko_eating_bananas", title: "Koko Eating Bananas", core_pattern: "Binary Search on Answer", difficulty: "Hard", approaches: [{ name: "Binary Search on Speed", idea: "Binary search on eating speed", time_complexity: "O(n log m)", space_complexity: "O(1)" }] }
         ]
@@ -429,7 +468,7 @@ export const dsaContent: Topic[] = [
       {
         level: "Hard",
         problems: [
-          { id: "merge_k_sorted_lists", title: "Merge K Sorted Lists", core_pattern: "Heap / Divide Conquer", difficulty: "Hard", approaches: [{ name: "Min Heap", idea: "Use heap to get minimum efficiently", time_complexity: "O(n log k)", space_complexity: "O(k)" }] },
+          { id: "merge_k_sorted_lists", title: "Merge K Sorted Lists", core_pattern: "Heap / Divide Conquer", difficulty: "Hard", approaches: [{ name: "Min Heap", idea: "Use heap to get minimum efficiently", time_complexity: "O(n log k)", space_complexity: "O(k)" }], external_links: [{ label: "LeetCode", url: "https://leetcode.com/problems/merge-k-sorted-lists/" }] },
           { id: "reverse_nodes_k_group", title: "Reverse Nodes in K-Group", core_pattern: "Pointer Manipulation", difficulty: "Hard", approaches: [{ name: "Iterative K-Reverse", idea: "Reverse k nodes at a time", time_complexity: "O(n)", space_complexity: "O(1)" }] }
         ]
       }
@@ -531,6 +570,133 @@ export const dsaContent: Topic[] = [
     ]
   }
 ];
+
+// Additional topics: Heaps and Greedy algorithms with problems and clear approach explanations
+export const additionalTopics: Topic[] = [
+  {
+    id: "heaps",
+    title: "Heaps & Priority Queues",
+    description: "Priority queue problems and heap-based optimizations.",
+    lesson_count: 8,
+    difficulty_sections: [
+      {
+        level: "Easy",
+        problems: [
+          {
+            id: "top_k_elements",
+            title: "Top K Frequent Elements",
+            core_pattern: "Heap / Hash Map",
+            difficulty: "Easy",
+            approaches: [
+              {
+                name: "Hash Map + Heap",
+                idea: "Count frequencies and keep a size-k heap of top frequencies",
+                steps: ["Count frequencies into map", "Iterate map and push into min-heap of size k", "Heap contains top k"],
+                time_complexity: "O(n log k)",
+                space_complexity: "O(n)",
+                when_to_use: "When k ≪ n or streaming input"
+              },
+              {
+                name: "Bucket Sort",
+                idea: "Group numbers by frequency and read buckets from high to low",
+                time_complexity: "O(n)",
+                space_complexity: "O(n)",
+                when_to_use: "Good when frequencies range is small or you need linear time"
+              }
+            ],
+            complexity_summary: "Heap approach is O(n log k); bucket approach can be O(n).",
+            interview_tip: "Discuss stability and memory trade-offs."
+          }
+        ]
+      },
+      {
+        level: "Medium",
+        problems: [
+          {
+            id: "merge_k_sorted_lists_heap",
+            title: "Merge K Sorted Lists (Heap)",
+            core_pattern: "Heap",
+            difficulty: "Medium",
+            approaches: [
+              {
+                name: "Min Heap",
+                idea: "Push head of each list into heap and pop smallest repeatedly",
+                steps: ["Initialize heap with k heads", "Pop smallest and push next from that list"],
+                time_complexity: "O(n log k)",
+                space_complexity: "O(k)",
+                when_to_use: "When merging many short lists"
+              },
+              {
+                name: "Divide and Conquer",
+                idea: "Pairwise merge lists like merge sort",
+                time_complexity: "O(n log k)",
+                space_complexity: "O(1) extra",
+                when_to_use: "When you prefer iterative merging without heap dependency"
+              }
+            ],
+            interview_tip: "Explain why both approaches have similar complexity but different constant factors."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "greedy",
+    title: "Greedy Algorithms",
+    description: "Problems where local optimal choices lead to a global optimum.",
+    lesson_count: 10,
+    difficulty_sections: [
+      {
+        level: "Easy",
+        problems: [
+          {
+            id: "activity_selection",
+            title: "Activity Selection / Interval Scheduling",
+            core_pattern: "Greedy",
+            difficulty: "Easy",
+            approaches: [
+              {
+                name: "Sort by Finish Time",
+                idea: "Choose earliest finishing activity and discard overlaps",
+                steps: ["Sort activities by end time", "Iterate and pick next compatible activity"],
+                time_complexity: "O(n log n)",
+                space_complexity: "O(1)",
+                when_to_use: "Standard interval scheduling problems"
+              }
+            ],
+            complexity_summary: "Sorting dominates: O(n log n). Greedy choice is provably optimal here.",
+            interview_tip: "Explain the exchange argument to justify greedy correctness."
+          }
+        ]
+      },
+      {
+        level: "Medium",
+        problems: [
+          {
+            id: "fractional_knapsack",
+            title: "Fractional Knapsack",
+            core_pattern: "Greedy + Sorting",
+            difficulty: "Medium",
+            approaches: [
+              {
+                name: "Greedy by Value Density",
+                idea: "Pick items with highest value/weight ratio first",
+                steps: ["Compute value density", "Sort by density", "Take as much as possible from highest density"],
+                time_complexity: "O(n log n)",
+                space_complexity: "O(1)",
+                when_to_use: "Fractional items allowed; not applicable to 0/1 knapsack"
+              }
+            ],
+            interview_tip: "Clarify fractional vs 0/1 knapsack distinction."
+          }
+        ]
+      }
+    ]
+  }
+];
+
+// Merge additionalTopics into main dsaContent array so UI picks them up
+dsaContent.push(...additionalTopics);
 
 export const getTopicById = (id: string): Topic | undefined => {
   return dsaContent.find(topic => topic.id === id);

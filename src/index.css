@@ -5,7 +5,65 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @layer base {
+  /* Light theme (default) */
   :root {
+    --background: 210 40% 98%; /* very light */
+    --foreground: 222 10% 8%; /* dark text */
+
+    --card: 210 40% 100%;
+    --card-foreground: 222 10% 8%;
+
+    --popover: 210 40% 100%;
+    --popover-foreground: 222 10% 8%;
+
+    --primary: 220 85% 36%; /* lively blue */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 100% 96%;
+    --secondary-foreground: 222 10% 8%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 215 20% 45%;
+
+    --accent: 320 72% 45%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 14% 88%;
+    --input: 220 14% 96%;
+    --ring: 220 85% 36%;
+
+    --radius: 0.75rem;
+
+    --success: 142 72% 45%;
+    --warning: 38 92% 50%;
+    --info: 199 89% 48%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(220 85% 36%) 0%, hsl(199 89% 48%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(320 72% 45%) 0%, hsl(280 65% 60%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(210 40% 100%) 0%, hsl(210 40% 98%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(210 100% 99%) 0%, hsl(210 95% 97%) 100%);
+
+    --glow-primary: 0 0 24px hsl(220 85% 36% / 0.18);
+    --glow-accent: 0 0 24px hsl(320 72% 45% / 0.18);
+
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --sidebar-background: 210 100% 99%;
+    --sidebar-foreground: 222 10% 8%;
+    --sidebar-primary: 220 85% 36%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 100% 96%;
+    --sidebar-accent-foreground: 222 10% 8%;
+    --sidebar-border: 220 14% 88%;
+    --sidebar-ring: 220 85% 36%;
+  }
+
+  /* Dark theme variables (applied when .dark is on documentElement) */
+  :root.dark {
     --background: 222 47% 6%;
     --foreground: 210 40% 98%;
 
