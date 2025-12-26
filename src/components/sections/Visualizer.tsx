@@ -208,31 +208,7 @@ const algorithmCode: Record<string, Record<string, string[]>> = {
       "  return -1",
       "}",
     ],
-  },
-  "Two Sum": {
-    Default: [
-      "function twoSum(arr, target) {",
-      "  map = {}",
-      "  for i from 0 to n-1 {",
-      "    need = target - arr[i]",
-      "    if need in map then return [map[need], i]",
-      "    map[arr[i]] = i",
-      "  }",
-      "}",
-    ],
-  },
-  "Subarray Sum Equals K": {
-    Default: [
-      "function subarraySumEqualsK(arr, k) {",
-      "  map = {0: -1}",
-      "  sum = 0",
-      "  for i from 0 to n-1 {",
-      "    sum += arr[i]",
-      "    if sum - k in map then return [map[sum-k]+1, i]",
-      "    map[sum] = i",
-      "  }",
-      "}",
-    ],
+  
   },
   "Reverse Linked List": {
     Default: [
@@ -326,113 +302,7 @@ const algorithmCode: Record<string, Record<string, string[]>> = {
       "}",
     ],
   },
-  "Prime Check": {
-    Default: [
-      "function isPrime(n) {",
-      "  if n < 2 return false",
-      "  for i from 2 to sqrt(n) {",
-      "    if n % i == 0 return false",
-      "  }",
-      "  return true",
-      "}",
-    ],
-  },
-  "Sieve of Eratosthenes": {
-    Default: [
-      "function sieve(n) {",
-      "  isPrime = [true..n]",
-      "  for p from 2 to sqrt(n) {",
-      "    if isPrime[p] then for mult = p*p to n step p mark not prime",
-      "  }",
-      "  return primes",
-      "}",
-    ],
-  },
-  "GCD": {
-    Default: [
-      "function gcd(a,b) {",
-      "  while b != 0 {",
-      "    t = a % b; a = b; b = t",
-      "  }",
-      "  return a",
-      "}",
-    ],
-  },
-  "LCM": {
-    Default: [
-      "function lcm(a,b) {",
-      "  return abs(a/gcd(a,b)*b)",
-      "}",
-    ],
-  },
-  "Binary Exponentiation": {
-    Default: [
-      "function binexp(b,e) {",
-      "  result = 1",
-      "  while e > 0 {",
-      "    if e & 1 result *= b",
-      "    b *= b; e >>= 1",
-      "  }",
-      "  return result",
-      "}",
-    ],
-  },
-  "Modular Exponentiation": {
-    Default: [
-      "function modexp(b,e,mod) {",
-      "  result = 1 % mod",
-      "  while e > 0 {",
-      "    if e & 1 result = (result * b) % mod",
-      "    b = (b*b)%mod; e >>= 1",
-      "  }",
-      "  return result",
-      "}",
-    ],
-  },
-  "nCr": {
-    Default: [
-      "function nCr(n,r) {",
-      "  r = min(r, n-r)",
-      "  numer = product(n, n-1, ..)",
-      "  denom = factorial(r)",
-      "  return numer/denom",
-      "}",
-    ],
-  },
-  "Count Set Bits": {
-    Default: [
-      "function countSetBits(x) {",
-      "  cnt = 0",
-      "  while x { x &= x-1; cnt++ }",
-      "  return cnt",
-      "}",
-    ],
-  },
-  "Is Power Of Two": {
-    Default: [
-      "function isPowerOfTwo(x) {",
-      "  return x > 0 and (x & (x-1)) == 0",
-      "}",
-    ],
-  },
-  "Single Number": {
-    Default: [
-      "function singleNumber(nums) {",
-      "  x = 0",
-      "  for n in nums x ^= n",
-      "  return x",
-      "}",
-    ],
-  },
-  "Generate Subsets": {
-    Default: [
-      "function subsets(nums) {",
-      "  for mask in 0..(1<<n)-1 {",
-      "    build subset from bits",
-      "  }",
-      "}",
-    ],
-  },
+
 };
 
 // Adapter: convert Algo.Step[] into AlgorithmStep[] used by this Visualizer
@@ -453,8 +323,7 @@ const convertAlgoSteps = (
     "Quick Sort": { compare: [4, 5], swap: [6], movePointer: [2] },
     "Binary Search": { compare: [2, 3], movePointer: [3] },
     "Linear Search": { compare: [1], found: [2] },
-    "Two Sum": { movePointer: [2], found: [4] },
-    "Subarray Sum Equals K": { movePointer: [3], found: [4] },
+    
     "Reverse Linked List": { visit: [2], stack: [3] },
     "Cycle Detection": { movePointer: [2], found: [5] },
     "Find Middle": { movePointer: [3,4], found: [6] },
@@ -464,17 +333,7 @@ const convertAlgoSteps = (
     "DFS": { stack: [2], visit: [4] },
     "Dijkstra": { relax: [4], visit: [2] },
     "Topological Sort": { queue: [2], visit: [3] },
-    "Prime Check": { compare: [2] },
-    "Sieve of Eratosthenes": { visit: [2] },
-    "GCD": { movePointer: [1] },
-    "LCM": {},
-    "Binary Exponentiation": { movePointer: [1], insert: [3] },
-    "Modular Exponentiation": { movePointer: [1], insert: [3] },
-    "nCr": { insert: [2, 3] },
-    "Count Set Bits": { movePointer: [1] },
-    "Is Power Of Two": { compare: [1] },
-    "Single Number": { movePointer: [1], insert: [2] },
-    "Generate Subsets": { insert: [1] },
+  
   };
 
   for (const ev of events) {
@@ -685,11 +544,8 @@ const generateFromAlgo = (name: string): AlgorithmStep[] => {
         return convertAlgoSteps(Algo.detectCycle(createLinkedListFromArray([1,2,3,4,5,6,7])).steps, defaultArr, "Cycle Detection");
       case "Find Middle":
         return convertAlgoSteps(Algo.findMiddle(createLinkedListFromArray([1,2,3,4,5,6,7])).steps, defaultArr, "Find Middle");
-      case "Two Sum":
-        return convertAlgoSteps(Algo.twoSum(defaultArr, 36).steps, defaultArr);
-      case "Subarray Sum Equals K":
-        return convertAlgoSteps(Algo.subarraySumEqualsK(defaultArr, 58).steps, defaultArr);
-      case "BFS":
+      
+        case "BFS":
         return convertAlgoSteps(Algo.bfsGraph([[1, 3], [2, 4], [], [4], [5, 6], [], []], 0).steps, defaultArr, "Level Order BFS");
       case "DFS":
         return convertAlgoSteps(Algo.dfsGraph([[1, 3], [2, 4], [], [4], [5, 6], [], []], 0).steps, defaultArr, "In-Order DFS");
@@ -697,29 +553,8 @@ const generateFromAlgo = (name: string): AlgorithmStep[] => {
         return convertAlgoSteps(Algo.dijkstra([[{ to: 1, weight: 1 }], [{ to: 2, weight: 1 }], []], 0).steps, defaultArr, "Dijkstra");
       case "Topological Sort":
         return convertAlgoSteps(Algo.topologicalSort([[1], [2], []]).steps, defaultArr, "Topological Sort");
-      case "Prime Check":
-        return convertAlgoSteps(Algo.isPrime(97).steps, defaultArr as any, "Prime Check");
-      case "Sieve of Eratosthenes":
-        return convertAlgoSteps(Algo.sieve(30).steps, defaultArr as any, "Sieve of Eratosthenes");
-      case "GCD":
-        return convertAlgoSteps(Algo.gcd(48, 18).steps, defaultArr as any, "GCD");
-      case "LCM":
-        return convertAlgoSteps(Algo.lcm(12, 18).steps, defaultArr as any, "LCM");
-      case "Binary Exponentiation":
-        return convertAlgoSteps(Algo.binaryExp(2, 10).steps, defaultArr as any, "Binary Exponentiation");
-      case "Modular Exponentiation":
-        return convertAlgoSteps(Algo.modExp(2, 10, 1000).steps, defaultArr as any, "Modular Exponentiation");
-      case "nCr":
-        return convertAlgoSteps(Algo.nCr(5, 2).steps, defaultArr as any, "nCr");
-      case "Count Set Bits":
-        return convertAlgoSteps(Algo.countSetBits(29).steps, defaultArr as any, "Count Set Bits");
-      case "Is Power Of Two":
-        return convertAlgoSteps(Algo.isPowerOfTwo(16).steps, defaultArr as any, "Is Power Of Two");
-      case "Single Number":
-        return convertAlgoSteps(Algo.singleNumber([2,2,1,3,3]).steps, defaultArr as any, "Single Number");
-      case "Generate Subsets":
-        return convertAlgoSteps(Algo.generateSubsets([1,2,3]).steps, defaultArr as any, "Generate Subsets");
-      default:
+      
+        default:
         return [];
     }
   } catch (err) {
