@@ -354,9 +354,83 @@ export const dsaContent: Topic[] = [
       {
         level: "Easy",
         problems: [
-          { id: "reverse_string", title: "Reverse String", core_pattern: "Two Pointer", difficulty: "Easy", approaches: [{ name: "Two Pointers", idea: "Swap from both ends", time_complexity: "O(n)", space_complexity: "O(1)" }] },
-          { id: "valid_palindrome", title: "Valid Palindrome", core_pattern: "Two Pointer", difficulty: "Easy", approaches: [{ name: "Two Pointers", idea: "Compare from both ends, skip non-alphanumeric", time_complexity: "O(n)", space_complexity: "O(1)" }] },
-          { id: "merge_sorted_arrays", title: "Merge Sorted Arrays", core_pattern: "Two Pointer Merge", difficulty: "Easy", approaches: [{ name: "Merge from End", idea: "Place larger elements first", time_complexity: "O(n + m)", space_complexity: "O(1)" }] }
+          { 
+            id: "reverse_string", 
+            title: "Reverse String", 
+            why_it_matters: "Fundamental string manipulation that introduces the two-pointer technique. This pattern appears in many harder problems.",
+            core_pattern: "Two Pointer", 
+            tags: ["string", "two-pointers"],
+            difficulty: "Easy", 
+            approaches: [
+              { 
+                name: "Two Pointers", 
+                idea: "Use two pointers starting from both ends. Swap characters at left and right pointers, then move them towards center until they meet.", 
+                steps: [
+                  "Initialize left = 0, right = length - 1",
+                  "While left < right: swap chars at left and right",
+                  "Increment left, decrement right",
+                  "Stop when pointers meet or cross"
+                ],
+                time_complexity: "O(n) - each character visited once", 
+                space_complexity: "O(1) - in-place swap, no extra space",
+                when_to_use: "When you need to reverse any sequence in-place"
+              }
+            ],
+            complexity_summary: "O(n) time, O(1) space. Classic in-place reversal pattern.",
+            interview_tip: "This is a warm-up problem. Mention you can also use recursion (O(n) stack space) but iterative is preferred."
+          },
+          { 
+            id: "valid_palindrome", 
+            title: "Valid Palindrome", 
+            why_it_matters: "Tests string comparison with character filtering. A common pattern in string problems.",
+            core_pattern: "Two Pointer", 
+            tags: ["string", "two-pointers"],
+            difficulty: "Easy", 
+            approaches: [
+              { 
+                name: "Two Pointers", 
+                idea: "Compare characters from both ends while skipping non-alphanumeric characters. Convert to lowercase for case-insensitive comparison.", 
+                steps: [
+                  "Initialize left = 0, right = length - 1",
+                  "Skip non-alphanumeric characters by moving pointers",
+                  "Compare lowercase versions of chars at both pointers",
+                  "If mismatch found, return false",
+                  "If pointers meet, return true"
+                ],
+                time_complexity: "O(n) - single pass through string", 
+                space_complexity: "O(1) - no extra data structures",
+                when_to_use: "Any problem requiring symmetric comparison with filtering"
+              }
+            ],
+            complexity_summary: "O(n) time, O(1) space.",
+            interview_tip: "Clarify what counts as alphanumeric. Handle edge cases: empty string, single char, all non-alphanumeric."
+          },
+          { 
+            id: "merge_sorted_arrays", 
+            title: "Merge Sorted Arrays", 
+            why_it_matters: "Core building block for merge sort. Tests understanding of in-place array manipulation.",
+            core_pattern: "Two Pointer Merge", 
+            tags: ["array", "two-pointers", "sorting"],
+            difficulty: "Easy", 
+            approaches: [
+              { 
+                name: "Merge from End", 
+                idea: "Start from the end of both arrays. Compare elements and place the larger one at the end of the first array. This avoids overwriting elements we haven't processed.", 
+                steps: [
+                  "p1 = m - 1 (last element of nums1's data)",
+                  "p2 = n - 1 (last element of nums2)",
+                  "p = m + n - 1 (last position of merged array)",
+                  "While p2 >= 0: compare and place larger element at p",
+                  "Decrement appropriate pointers"
+                ],
+                time_complexity: "O(n + m) - process each element once", 
+                space_complexity: "O(1) - merge in-place",
+                when_to_use: "When merging into an array with pre-allocated space"
+              }
+            ],
+            complexity_summary: "O(n + m) time, O(1) space. Key insight: work backwards to avoid overwriting.",
+            interview_tip: "The trick is starting from the end. If you start from the beginning, you'd overwrite elements in nums1."
+          }
         ]
       },
       {
@@ -386,24 +460,235 @@ export const dsaContent: Topic[] = [
       {
         level: "Easy",
         problems: [
-          { id: "max_sum_k", title: "Max Sum Subarray of Size K", core_pattern: "Fixed Window", difficulty: "Easy", approaches: [{ name: "Sliding Window", idea: "Add new, remove old element", time_complexity: "O(n)", space_complexity: "O(1)" }] },
-          { id: "longest_substring_k_distinct_variant", title: "K Distinct Variant", core_pattern: "Variable Window", difficulty: "Easy", approaches: [{ name: "HashMap + Window", idea: "Track character counts", time_complexity: "O(n)", space_complexity: "O(k)" }] }
+          { 
+            id: "max_sum_k", 
+            title: "Max Sum Subarray of Size K", 
+            why_it_matters: "Introduces the sliding window technique. This optimization pattern reduces O(n*k) brute force to O(n).",
+            core_pattern: "Fixed Window", 
+            tags: ["array", "sliding-window"],
+            difficulty: "Easy", 
+            approaches: [
+              { 
+                name: "Sliding Window", 
+                idea: "Maintain a window of exactly k elements. Slide by removing the leftmost element and adding the next element on the right.", 
+                steps: [
+                  "Calculate sum of first k elements",
+                  "Store this as currentMax",
+                  "For each subsequent position: subtract element leaving window, add element entering window",
+                  "Update max if current sum is larger",
+                  "Return max after processing all windows"
+                ],
+                time_complexity: "O(n) - single pass through array", 
+                space_complexity: "O(1) - only track current sum and max",
+                when_to_use: "Any problem asking for max/min/sum of contiguous elements of fixed size"
+              }
+            ],
+            complexity_summary: "O(n) time vs O(n*k) brute force. Fixed-size window is simpler than variable window.",
+            interview_tip: "This is the foundation for harder sliding window problems. Master this before moving to variable-size windows."
+          },
+          { 
+            id: "longest_substring_k_distinct_variant", 
+            title: "Longest Substring with K Distinct Characters", 
+            why_it_matters: "Introduces variable-size sliding window with a constraint. Common pattern in string problems.",
+            core_pattern: "Variable Window", 
+            tags: ["string", "sliding-window", "hashmap"],
+            difficulty: "Easy", 
+            approaches: [
+              { 
+                name: "HashMap + Sliding Window", 
+                idea: "Expand window by adding characters. When distinct count exceeds k, shrink from left until constraint is satisfied.", 
+                steps: [
+                  "Use HashMap to track character frequencies in window",
+                  "Expand right pointer, add char to map",
+                  "While map.size > k: shrink from left, remove chars with 0 count",
+                  "Update maxLength at each valid window",
+                  "Return maxLength"
+                ],
+                time_complexity: "O(n) - each character added and removed at most once", 
+                space_complexity: "O(k) - map stores at most k+1 characters",
+                when_to_use: "When window size varies based on a constraint (count, sum, etc.)"
+              }
+            ],
+            complexity_summary: "O(n) time, O(k) space. Variable window = expand until invalid, shrink until valid.",
+            interview_tip: "The key insight: both pointers only move forward, so total operations are O(n), not O(n²)."
+          }
         ]
       },
       {
         level: "Medium",
         problems: [
-          { id: "longest_substring_no_repeat", title: "Longest Substring Without Repeating", core_pattern: "Variable Window", difficulty: "Medium", approaches: [{ name: "Sliding Window + Set", idea: "Shrink window on duplicate", time_complexity: "O(n)", space_complexity: "O(k)" }], interview_tip: "Use set or map for O(1) lookup." },
-          { id: "character_replacement", title: "Longest Repeating Character Replacement", core_pattern: "Variable Window", difficulty: "Medium", approaches: [{ name: "Sliding Window", idea: "Track max frequency character", time_complexity: "O(n)", space_complexity: "O(26)" }] },
-          { id: "min_size_subarray_sum", title: "Minimum Size Subarray Sum", core_pattern: "Variable Window", difficulty: "Medium", approaches: [{ name: "Sliding Window", idea: "Shrink when sum >= target", time_complexity: "O(n)", space_complexity: "O(1)" }] },
-          { id: "fruits_into_baskets", title: "Fruits Into Baskets", core_pattern: "Variable Window", difficulty: "Medium", approaches: [{ name: "Sliding Window", idea: "Max window with 2 distinct fruits", time_complexity: "O(n)", space_complexity: "O(1)" }] }
+          { 
+            id: "longest_substring_no_repeat", 
+            title: "Longest Substring Without Repeating Characters", 
+            why_it_matters: "One of the most frequently asked string problems. Tests your understanding of variable-size sliding window.",
+            core_pattern: "Variable Window", 
+            tags: ["string", "sliding-window", "hashmap"],
+            difficulty: "Medium", 
+            approaches: [
+              { 
+                name: "Sliding Window + HashSet", 
+                idea: "Expand the window by moving right pointer. When a duplicate is found, shrink from left until the duplicate is removed.", 
+                steps: [
+                  "Use a Set to track characters in current window",
+                  "Move right pointer: if char not in set, add it and update maxLength",
+                  "If char already in set: remove chars from left until duplicate is gone",
+                  "Continue until right reaches end",
+                  "Return maxLength"
+                ],
+                time_complexity: "O(n) - each char added/removed at most once", 
+                space_complexity: "O(min(n, alphabet)) - set stores unique chars",
+                when_to_use: "When you need to find longest substring with unique constraint"
+              },
+              {
+                name: "Sliding Window + HashMap (Optimized)",
+                idea: "Store each character's last seen index. When duplicate found, jump left pointer directly to position after previous occurrence.",
+                steps: [
+                  "Use HashMap: char -> last index",
+                  "For each char at right: if in map and index >= left, move left to map[char] + 1",
+                  "Update map[char] = right",
+                  "Update maxLength = max(maxLength, right - left + 1)"
+                ],
+                time_complexity: "O(n)",
+                space_complexity: "O(min(n, alphabet))",
+                when_to_use: "Slightly faster as left pointer can jump instead of sliding one by one"
+              }
+            ],
+            complexity_summary: "Both O(n) time. HashMap approach is slightly more efficient in practice.",
+            interview_tip: "Use set or map for O(1) lookup. Be clear about what 'substring' vs 'subsequence' means."
+          },
+          { 
+            id: "character_replacement", 
+            title: "Longest Repeating Character Replacement", 
+            why_it_matters: "Introduces the concept of tracking the most frequent element in a window. Common pattern in optimization problems.",
+            core_pattern: "Variable Window", 
+            tags: ["string", "sliding-window"],
+            difficulty: "Medium", 
+            approaches: [
+              { 
+                name: "Sliding Window + Frequency Count", 
+                idea: "Track the count of the most frequent character in the window. If (window size - max frequency) > k, shrink the window.", 
+                steps: [
+                  "Maintain frequency count array for 26 letters",
+                  "Track maxFreq = max count of any single char in window",
+                  "If (right - left + 1) - maxFreq > k: shrink from left",
+                  "Update result with current window size",
+                  "Key insight: maxFreq doesn't need to be accurate when shrinking"
+                ],
+                time_complexity: "O(n) - single pass", 
+                space_complexity: "O(26) = O(1) - fixed size frequency array",
+                when_to_use: "When allowed to change k elements to maximize a uniform sequence"
+              }
+            ],
+            complexity_summary: "O(n) time, O(1) space. The trick is the 'at most k replacements' translates to window_size - max_freq <= k.",
+            interview_tip: "The maxFreq optimization is tricky to explain. Practice articulating why it's correct."
+          },
+          { 
+            id: "min_size_subarray_sum", 
+            title: "Minimum Size Subarray Sum", 
+            why_it_matters: "Classic variable window problem. Find smallest window that satisfies a condition.",
+            core_pattern: "Variable Window", 
+            tags: ["array", "sliding-window"],
+            difficulty: "Medium", 
+            approaches: [
+              { 
+                name: "Sliding Window", 
+                idea: "Expand window until sum >= target, then shrink from left while maintaining the condition to find minimum length.", 
+                steps: [
+                  "Initialize left = 0, currentSum = 0, minLength = infinity",
+                  "For each right: add arr[right] to currentSum",
+                  "While currentSum >= target: update minLength, subtract arr[left], increment left",
+                  "Return minLength (or 0 if never found)"
+                ],
+                time_complexity: "O(n) - each element processed twice at most", 
+                space_complexity: "O(1)",
+                when_to_use: "Finding minimum window that satisfies a sum/count threshold"
+              }
+            ],
+            complexity_summary: "O(n) time, O(1) space. Note: this is minimum length, so we shrink while valid.",
+            interview_tip: "Contrast with maximum length problems where you expand while valid and shrink when invalid."
+          },
+          { 
+            id: "fruits_into_baskets", 
+            title: "Fruits Into Baskets", 
+            why_it_matters: "Same as longest substring with at most k distinct characters (k=2). Good practice for pattern recognition.",
+            core_pattern: "Variable Window", 
+            tags: ["array", "sliding-window", "hashmap"],
+            difficulty: "Medium", 
+            approaches: [
+              { 
+                name: "Sliding Window + HashMap", 
+                idea: "Maintain a window with at most 2 distinct fruit types. Shrink when you have more than 2 types.", 
+                steps: [
+                  "Use HashMap to track count of each fruit type in window",
+                  "Expand right, add fruit to map",
+                  "While map.size > 2: shrink from left, remove fruits with count 0",
+                  "Update maxLength with current window size"
+                ],
+                time_complexity: "O(n)", 
+                space_complexity: "O(1) - map has at most 3 entries",
+                when_to_use: "Maximum subarray with at most k distinct elements"
+              }
+            ],
+            complexity_summary: "O(n) time, O(1) space. Identical to 'Longest Substring with At Most K Distinct' with k=2.",
+            interview_tip: "Recognize this as a disguised version of the k-distinct problem. Pattern recognition is key."
+          }
         ]
       },
       {
         level: "Hard",
         problems: [
-          { id: "minimum_window_substring_sw", title: "Minimum Window Substring", core_pattern: "Variable Window", difficulty: "Hard", approaches: [{ name: "Sliding Window + HashMap", idea: "Expand to find, shrink to minimize", time_complexity: "O(n)", space_complexity: "O(k)" }] },
-          { id: "sliding_window_max_sw", title: "Sliding Window Maximum", core_pattern: "Monotonic Deque", difficulty: "Hard", approaches: [{ name: "Monotonic Deque", idea: "Maintain decreasing order", time_complexity: "O(n)", space_complexity: "O(k)" }] }
+          { 
+            id: "minimum_window_substring_sw", 
+            title: "Minimum Window Substring", 
+            why_it_matters: "One of the hardest sliding window problems. Tests ability to track multiple character frequencies.",
+            core_pattern: "Variable Window", 
+            tags: ["string", "sliding-window", "hashmap"],
+            difficulty: "Hard", 
+            approaches: [
+              { 
+                name: "Sliding Window + Two HashMaps", 
+                idea: "Expand until all required characters are covered, then shrink to find minimum window. Track how many unique characters have sufficient count.", 
+                steps: [
+                  "Build frequency map for target string t",
+                  "Use 'have' counter for chars meeting required frequency",
+                  "Expand right: update window freq, increment 'have' when freq matches required",
+                  "While have == need: update result, shrink from left, decrement 'have' when freq drops below required",
+                  "Return minimum window found"
+                ],
+                time_complexity: "O(n + m) where n = length of s, m = length of t", 
+                space_complexity: "O(k) where k = unique characters",
+                when_to_use: "Finding minimum window containing all required elements"
+              }
+            ],
+            complexity_summary: "O(n + m) time, O(k) space. The 'have/need' counter optimization avoids checking all frequencies each time.",
+            interview_tip: "This is a hard problem. Draw out the window state at each step. Handle edge cases: empty strings, no valid window."
+          },
+          { 
+            id: "sliding_window_max_sw", 
+            title: "Sliding Window Maximum", 
+            why_it_matters: "Introduces monotonic deque data structure. Useful for problems needing efficient min/max in a sliding window.",
+            core_pattern: "Monotonic Deque", 
+            tags: ["array", "sliding-window", "deque"],
+            difficulty: "Hard", 
+            approaches: [
+              { 
+                name: "Monotonic Decreasing Deque", 
+                idea: "Maintain a deque of indices where elements are in decreasing order. The front always has the maximum for current window.", 
+                steps: [
+                  "Use deque to store indices (not values)",
+                  "For each element: remove smaller elements from back (they can't be max)",
+                  "Add current index to back",
+                  "Remove front if it's outside window (index <= i - k)",
+                  "Front of deque is the max for current window"
+                ],
+                time_complexity: "O(n) - each element added/removed from deque at most once", 
+                space_complexity: "O(k) - deque holds at most k elements",
+                when_to_use: "When you need O(1) access to min/max in a sliding window"
+              }
+            ],
+            complexity_summary: "O(n) time, O(k) space. Monotonic deque maintains order property efficiently.",
+            interview_tip: "Explain why we store indices instead of values (to check if element is still in window). Draw the deque state."
+          }
         ]
       }
     ]
@@ -417,8 +702,59 @@ export const dsaContent: Topic[] = [
       {
         level: "Easy",
         problems: [
-          { id: "binary_search", title: "Binary Search", core_pattern: "Binary Search", difficulty: "Easy", approaches: [{ name: "Iterative Binary Search", idea: "Divide search space in half", time_complexity: "O(log n)", space_complexity: "O(1)" }] },
-          { id: "first_last_pos", title: "First and Last Position", core_pattern: "Binary Search", difficulty: "Easy", approaches: [{ name: "Two Binary Searches", idea: "Find left bound then right bound", time_complexity: "O(log n)", space_complexity: "O(1)" }] }
+          { 
+            id: "binary_search", 
+            title: "Binary Search", 
+            why_it_matters: "Fundamental algorithm that achieves O(log n) search in sorted data. The basis for many optimization techniques.",
+            core_pattern: "Binary Search", 
+            tags: ["array", "binary-search"],
+            difficulty: "Easy", 
+            approaches: [
+              { 
+                name: "Iterative Binary Search", 
+                idea: "Repeatedly halve the search space by comparing target with middle element. Eliminate half the remaining elements each iteration.", 
+                steps: [
+                  "Initialize left = 0, right = n - 1",
+                  "While left <= right:",
+                  "  Calculate mid = left + (right - left) / 2 (avoids overflow)",
+                  "  If arr[mid] == target: return mid",
+                  "  If arr[mid] < target: search right half (left = mid + 1)",
+                  "  Else: search left half (right = mid - 1)",
+                  "Return -1 if not found"
+                ],
+                time_complexity: "O(log n) - halve search space each step", 
+                space_complexity: "O(1) - only use pointers",
+                when_to_use: "Searching in sorted arrays, or when search space can be halved based on a condition"
+              }
+            ],
+            complexity_summary: "O(log n) time, O(1) space. Each iteration eliminates half the candidates.",
+            interview_tip: "Use mid = left + (right - left) / 2 instead of (left + right) / 2 to prevent integer overflow."
+          },
+          { 
+            id: "first_last_pos", 
+            title: "First and Last Position of Element", 
+            why_it_matters: "Extends binary search to find boundaries. Essential for problems involving ranges or counts.",
+            core_pattern: "Binary Search", 
+            tags: ["array", "binary-search"],
+            difficulty: "Easy", 
+            approaches: [
+              { 
+                name: "Two Binary Searches", 
+                idea: "Run binary search twice: once to find leftmost occurrence, once to find rightmost. Modify the search to continue even after finding target.", 
+                steps: [
+                  "Find left bound: when arr[mid] == target, continue searching left (right = mid - 1)",
+                  "Find right bound: when arr[mid] == target, continue searching right (left = mid + 1)",
+                  "Track the last found position in each search",
+                  "Return [leftBound, rightBound] or [-1, -1] if not found"
+                ],
+                time_complexity: "O(log n) - two binary searches are still O(log n)", 
+                space_complexity: "O(1)",
+                when_to_use: "When you need to find the range of duplicates in a sorted array"
+              }
+            ],
+            complexity_summary: "O(log n) time for both searches combined. Key: don't stop when you find target.",
+            interview_tip: "This pattern is useful for counting occurrences: count = rightBound - leftBound + 1."
+          }
         ]
       },
       {
